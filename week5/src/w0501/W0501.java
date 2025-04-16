@@ -14,16 +14,20 @@ public class W0501 {
 			plainTxt += plainTxt;
 		}
 		
+		
 		byte[] data = plainTxt.getBytes();
 		System.out.println("plain text: " + data.length);
 		
 		MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+//		
+//		for (int i=0; i < data.length; i+= SHA_BLOCK_SIZE) {
+//			byte[] block = Arrays.copyOfRange(data, i, i+SHA_BLOCK_SIZE);
+//			messageDigest.update(block);
+//		
+//		}
 		
-		for (int i=0; i < data.length; i+= SHA_BLOCK_SIZE) {
-			byte[] block = Arrays.copyOfRange(data, i, i+SHA_BLOCK_SIZE);
-			messageDigest.update(block);
-		
-		}
+		messageDigest.update(data);
+
 		byte[] messageDigestSHA = messageDigest.digest();
 		printBytes(messageDigestSHA);
 		
