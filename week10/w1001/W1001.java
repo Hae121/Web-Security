@@ -1,0 +1,28 @@
+package week10.w1001;
+
+import java.util.Scanner;
+
+public class W1001 {
+
+	public static void main(String[] args) throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		
+		
+		Scanner sc = new Scanner(System.in);
+		
+		Date d1 = new Date(2019, 5, 13);
+		Date d2 = new Date(2000, 1, 1);
+		Date d3 = new Date(1988, 12, 25);
+
+		
+		System.out.println("Original Array:");
+		Diary diary1 = new Diary(d1, d2, d3);
+		System.out.println(diary1);
+		
+		System.out.println("Cloned Array:");
+		Diary diary2 = (Diary) diary1.clone();
+		System.out.println(diary2);
+
+	}
+
+}
