@@ -1,0 +1,5 @@
+package week11.w1101;
+
+public class InvaildInputException {
+
+}

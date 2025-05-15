@@ -1,0 +1,48 @@
+package week09.w0901;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.util.Scanner;
+
+public class SignMessage {
+	public static void main(String[] args) throws Exception {
+		String data = "Software security of Dongduk University";
+		System.out.println("서명에 사용할 데이터 : " + data);
+		byte[] dataBytes = data.getBytes("UTF-8");
+
+		Scanner sc = new Scanner(System.in);
+		String keyName = sc.next();
+		ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyName));
+		PrivateKey privateKey = (PrivateKey) in.readObject();
+		in.close();
+
+		Signature signature = Signature.getInstance("SHA256withRSA");
+		signature.initSign(privateKey);
+		signature.update(dataBytes);
+
+		byte[] signedBytes = signature.sign();
+		System.out.print("서명을 저장할 파일 이름 : ");
+		String signName = sc.next();
+
+		try (FileOutputStream fos = new FileOutputStream(signName)) {
+			fos.write(signedBytes);
+			System.out.println("생성된 서명 정보: " + signedBytes.length + " bytes");
+            printBytes(signedBytes);
+		}catch (Exception e) {
+            e.printStackTrace();
+        }
+
+		System.out.println("서명을 파일에 저장했습니다.");
+		sc.close();
+	}
+
+	static void printBytes(byte[] bytes) {
+        for (byte b : bytes) {
+            System.out.printf("%02X ", b);
+        }
+        System.out.println();
+    }
+}

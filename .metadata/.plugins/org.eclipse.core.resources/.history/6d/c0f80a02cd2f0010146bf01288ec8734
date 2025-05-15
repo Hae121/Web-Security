@@ -1,0 +1,31 @@
+package week10.w1001;
+
+public class Diary implements Cloneable{
+	
+	Date[] listOfDates = new Date[3];
+
+	public Diary(Date d1, Date d2, Date d3) {
+		this.listOfDates[0] = d1;
+		this.listOfDates[1] = d2;
+		this.listOfDates[2] = d3;
+	}
+	
+	public setDiary(int i, Date d) {
+		listOfDates[i] = Date d;
+	}
+	
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+	public String toString() {
+		String rslt= "{ ";
+		for (Date i : listOfDates) {
+			i.toString();
+			rslt += i;
+		}
+		rslt += " }";
+		return rslt;
+	}
+
+}

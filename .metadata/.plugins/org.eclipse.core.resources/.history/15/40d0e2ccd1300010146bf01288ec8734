@@ -1,0 +1,61 @@
+package week09.w0901;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.util.Scanner;
+
+public class VerifySignature {
+	public static void main(String[] args) throws Exception {
+		String data = "Software security of Dongduk University";
+		System.out.println("서명에 사용할 데이터 : " + data);
+		byte[] dataBytes = data.getBytes("UTF-8");
+
+		Scanner sc = new Scanner(System.in);
+		System.out.print("공개키 파일 이름: ");
+		String keyName = sc.next();
+
+		ObjectInputStream in = new ObjectInputStream(new FileInputStream(keyName));
+		PublicKey publicKey = (PublicKey) in.readObject();
+		in.close();
+
+		System.out.print("전자서명 파일 이름: ");
+		String signName = sc.next();
+		byte[] signatureBytes = readAllBytes(signName);
+
+		Signature signature = Signature.getInstance("SHA256withRSA");
+		signature.initVerify(publicKey);
+		signature.update(dataBytes);
+
+		System.out.println("입력된 서명 정보: " + signatureBytes.length + " bytes");
+		printBytes(signatureBytes);
+
+		boolean result = signature.verify(signatureBytes);
+		System.out.println("서명 검증 결과: " + result);
+		sc.close();
+	}
+
+	static byte[] readAllBytes(String filename) throws IOException {
+		FileInputStream fis = new FileInputStream(filename);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int bytesRead;
+
+		while ((bytesRead = fis.read(buffer)) != -1) {
+			baos.write(buffer, 0, bytesRead);
+		}
+
+		fis.close();
+		return baos.toByteArray();
+	}
+
+	static void printBytes(byte[] bytes) {
+		for (byte b : bytes) {
+			System.out.printf("%02X ", b);
+		}
+		System.out.println();
+	}
+}

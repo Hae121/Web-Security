@@ -1,0 +1,45 @@
+package week09.w0902;
+
+import java.io.*;
+import java.security.*;
+
+public class SignFile {
+    public static void main(String[] args) {
+        try {
+            // 1. 파일 데이터 읽기
+            String dataFilename = "Woolf.txt";
+            byte[] dataBytes = java.nio.file.Files.readAllBytes(new File(dataFilename).toPath());
+
+            // 2. 개인키 로드
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("private.key"));
+            PrivateKey privateKey = (PrivateKey) in.readObject();
+            in.close();
+
+            // 3. 서명 객체 생성 및 초기화
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKey);
+            signature.update(dataBytes);
+
+            // 4. 서명 생성
+            byte[] signedBytes = signature.sign();
+            System.out.println("서명 정보: " + signedBytes.length + " bytes");
+            printBytes(signedBytes);
+
+            // 5. 서명 저장
+            try (FileOutputStream fos = new FileOutputStream("sig_bob.bin")) {
+                fos.write(signedBytes);
+            }
+            System.out.println("서명을 파일에 저장했습니다.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void printBytes(byte[] bytes) {
+        for (byte b : bytes) {
+            System.out.printf("%02X ", b);
+        }
+        System.out.println();
+    }
+}

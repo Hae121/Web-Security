@@ -1,0 +1,43 @@
+package week09.w0902;
+
+import java.io.*;
+import java.security.*;
+
+public class VerifyFile {
+    public static void main(String[] args) {
+        try {
+            // 1. 파일 데이터 읽기
+            String dataFilename = "Woolf.txt";
+            byte[] dataBytes = java.nio.file.Files.readAllBytes(new File(dataFilename).toPath());
+
+            // 2. 서명 읽기
+            byte[] signatureBytes = java.nio.file.Files.readAllBytes(new File("sig_bob.bin").toPath());
+            System.out.println("입력된 서명 정보: " + signatureBytes.length + " bytes");
+            printBytes(signatureBytes);
+
+            // 3. 공개키 로드
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("public.key"));
+            PublicKey publicKey = (PublicKey) in.readObject();
+            in.close();
+
+            // 4. 검증용 Signature 객체 생성 및 초기화
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initVerify(publicKey);
+            signature.update(dataBytes);
+
+            // 5. 서명 검증
+            boolean result = signature.verify(signatureBytes);
+            System.out.println("서명 검증 결과: " + result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void printBytes(byte[] bytes) {
+        for (byte b : bytes) {
+            System.out.printf("%02X ", b);
+        }
+        System.out.println();
+    }
+}

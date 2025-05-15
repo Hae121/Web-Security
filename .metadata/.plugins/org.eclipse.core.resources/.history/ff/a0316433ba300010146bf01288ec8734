@@ -1,0 +1,38 @@
+package week09.w0901;
+
+import java.io.*;
+import java.security.*;
+import java.security.spec.*;
+
+public class SignMessage {
+    public static void main(String[] args) throws Exception {
+        // 1. 개인키 로드
+    	ObjectInputStream in = new ObjectInputStream(new FileInputStream("private.key"));
+        PrivateKey privateKey = (PrivateKey) in.readObject();
+        in.close();
+
+
+        // 2. 데이터 정의
+        String data = "Software security of Dongduk University";
+        byte[] dataBytes = data.getBytes("UTF-8");
+
+        // 3. Signature 객체 생성 및 초기화
+        Signature signature = Signature.getInstance("SHA256withRSA");
+        signature.initSign(privateKey);
+        signature.update(dataBytes);
+
+        // 4. 서명 생성
+        byte[] signedBytes = signature.sign();
+
+        // 5. 서명 저장
+        try (FileOutputStream fos = new FileOutputStream("sig_alice.bin")) {
+            fos.write(signedBytes);
+        }
+
+        System.out.println("서명을 파일에 저장했습니다. 길이: " + signedBytes.length + " bytes");
+    }
+
+    private static byte[] readAllBytes(String filename) throws IOException {
+        return java.nio.file.Files.readAllBytes(new File(filename).toPath());
+    }
+}
